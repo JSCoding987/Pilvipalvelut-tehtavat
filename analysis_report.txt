@@ -1,0 +1,5 @@
+Design patterns detected:
+- Singleton
+- Observer
+- Strategy
+- Decorator
