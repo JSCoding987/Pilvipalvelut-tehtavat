@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ], 
-  base: '/Pilvipalvelut-tehtavat/Tehtava3/',
+  base: '/Pilvipalvelut-tehtavat/tehtava3/',
 })
