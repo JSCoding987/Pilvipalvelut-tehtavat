@@ -4,7 +4,7 @@ import './App.css'
 function App() {
   const [codename, setCodename] = useState('');
 
-  // 3.3. Koodinimen generointi -funktio
+
   const generateCodename = () => {
     const adjectives = ["Sneaky", "Electric", "Silent", "Hyper", "Cosmic"];
     const animals = ["Fox", "Panda", "Lizard", "Dragon", "Hawk"];
@@ -16,23 +16,23 @@ function App() {
     return `${adj}${animal}${number}`;
   };
 
-  // 3.2. & 3.4. Toiminnallisuus: Haku ja tallennus
+  
   useEffect(() => {
-    // Haetaan aiemmin luotu nimi
+    
     const cachedName = localStorage.getItem("codename");
 
     if (cachedName) {
-      // Jos löytyi, käytetään sitä
+     
       setCodename(cachedName);
     } else {
-      // Jos ei löydy, generoidaan uusi ja tallennetaan se heti
+    
       const newName = generateCodename();
       setCodename(newName);
       localStorage.setItem("codename", newName);
     }
   }, []);
 
-  // Toiminto nimen vaihtamiseen (jos käyttäjä haluaa generoida uuden)
+  
   const handleNewName = () => {
     const newName = generateCodename();
     setCodename(newName);
@@ -49,11 +49,11 @@ function App() {
       </div>
 
       <button onClick={handleNewName} className="btn-primary">
-        Generoi uusi koodinimi
+        Haluatko uuden nimen?
       </button>
 
       <p className="footer-info">
-        Nimi on tallennettu selaimesi Local Storageen.
+        Nimesi tallentuu poistumisen jälkeen
       </p>
     </div>
   )
