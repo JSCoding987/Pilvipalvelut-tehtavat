@@ -1,0 +1,102 @@
+:root {
+  --hsl-blue: #007ac9;
+  --severe-red: #e53e3e;
+  --bg-color: #f0f4f8;
+  --card-bg: #ffffff;
+  --text-color: #333;
+  --border-color: #ddd;
+}
+/* Tämä varmistaa, että Häiriövahti-teksti muuttuu valkoiseksi dark modessa */
+[data-theme='dark'] .header-left h2 {
+    color: #f7fafc !important;
+}
+
+/* Jos haluat varmistaa, että se on musta light modessa */
+[data-theme='light'] .header-left h2 {
+    color: #1a202c !important;
+}
+
+/* Lisätään myös pehmeä vaihtuminen, jotta se ei välkähdä */
+.header-left h2 {
+    transition: color 0.3s ease;
+}
+/* Dark Mode -värit */
+[data-theme='dark'] {
+  --bg-color: #1a202c;
+  --card-bg: #2d3748;
+  --text-color: #f7fafc;
+  --border-color: #4a5568;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.app-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.alert-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+.alert-card.severe { border-left: 6px solid var(--severe-red); }
+.alert-card.info { border-left: 6px solid var(--hsl-blue); }
+
+.login-card {
+  background-color: var(--card-bg);
+  padding: 40px;
+  border-radius: 15px;
+  color: var(--text-color);
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 5px;
+}
+
+/* Toast-ilmoitus */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { bottom: -50px; opacity: 0; }
+  to { bottom: 20px; opacity: 1; }
+}
+
+.stats-bar {
+  background: var(--hsl-blue);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-around;
+}

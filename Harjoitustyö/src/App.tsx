@@ -1,0 +1,321 @@
+import { useEffect, useState } from 'react';
+import { fetchHslAlerts } from './services/hslApi';
+import { 
+  auth, 
+  db, 
+  loginEmail, 
+  logout, 
+  onAuthStateChanged, 
+  toggleFavorite 
+} from './services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import type { User } from 'firebase/auth';
+import { 
+  AlertTriangle, 
+  Bus, 
+  Info, 
+  Loader2, 
+  Search, 
+  LogOut, 
+  Moon, 
+  Sun, 
+  Star, 
+  FileText, 
+  ChevronLeft 
+} from 'lucide-react';
+import './App.css';
+
+interface HslAlert {
+  alertHeaderText: string;
+  alertDescriptionText: string;
+  alertSeverityLevel: string;
+  route?: { shortName: string; mode: string; };
+}
+
+function App() {
+  // --- TILA-MUUTTUJAT ---
+  const [user, setUser] = useState<User | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [view, setView] = useState<'main' | 'docs'>('main');
+  const [alerts, setAlerts] = useState<HslAlert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  // --- APUFUNKTIOT ---
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        fetchHslAlerts()
+          .then(setAlerts)
+          .catch(() => showToast("Häiriötietojen haku epäonnistui"))
+          .finally(() => setLoading(false));
+        
+        const userRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          setFavorites(docSnap.data().favorites || []);
+        }
+      } else {
+        setLoading(false);
+        setFavorites([]);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // --- KIRJAUTUMISEN KÄSITTELY + VIRHEILMOITUKSET ---
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(''); // Tyhjennetään vanha virhe
+    
+    try {
+      await loginEmail(email, password);
+      showToast("Tervetuloa takaisin!");
+    } catch (err: any) {
+      console.error("Login error code:", err.code);
+      
+      // Tarkennetut virheilmoitukset Firebasen koodeilla
+      switch (err.code) {
+        case 'auth/invalid-credential':
+          setAuthError("Väärä sähköpostiosoite tai salasana.");
+          break;
+        case 'auth/user-not-found':
+          setAuthError("Käyttäjätunnusta ei löytynyt.");
+          break;
+        case 'auth/wrong-password':
+          setAuthError("Väärä salasana.");
+          break;
+        case 'auth/invalid-email':
+          setAuthError("Virheellinen sähköpostiosoite.");
+          break;
+        case 'auth/too-many-requests':
+          setAuthError("Liian monta epäonnistunutta yritystä. Yritä hetken kuluttua uudelleen.");
+          break;
+        default:
+          setAuthError("Kirjautuminen epäonnistui. Yritä uudelleen.");
+      }
+    }
+  };
+
+  const handleFavoriteToggle = async (lineId: string) => {
+    if (!user) return;
+    const isFav = favorites.includes(lineId);
+    const newFavs = isFav ? favorites.filter(id => id !== lineId) : [...favorites, lineId];
+    setFavorites(newFavs);
+    await toggleFavorite(user.uid, lineId, !isFav);
+    showToast(isFav ? `Poistettu: ${lineId}` : `Lisätty: ${lineId}`);
+  };
+
+  // --- SUODATUSLOGIIKKA ---
+  const filteredAlerts = alerts
+    .filter(a => {
+      const name = a.route?.shortName || '';
+      if (showOnlyFavorites && !favorites.includes(name)) return false;
+      return name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+             a.alertHeaderText.toLowerCase().includes(searchQuery.toLowerCase());
+    })
+    .filter((a, i, self) => i === self.findIndex(t => t.alertDescriptionText === a.alertDescriptionText));
+
+  const favAlertsCount = alerts.filter(a => a.route?.shortName && favorites.includes(a.route.shortName)).length;
+
+  // --- KIRJAUTUMISNÄKYMÄ ---
+  if (!user) {
+    return (
+      <div className="login-overlay">
+        <div className="login-card animate-in">
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <Bus size={48} color="#007ac9" />
+            <h1 style={{ color: '#007ac9', marginTop: '10px' }}>Häiriövahti</h1>
+            <p>Kirjaudu sisään hallinnoidaksesi suosikkejasi</p>
+          </div>
+          <form onSubmit={handleAuth} className="login-form">
+            <input 
+              type="email" 
+              placeholder="Sähköposti" 
+              className="login-input" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              required 
+            />
+            <input 
+              type="password" 
+              placeholder="Salasana" 
+              className="login-input" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              required 
+            />
+            
+            {/* VIRHEILMOITUS LAATIKKO */}
+            {authError && (
+              <div style={{ 
+                backgroundColor: '#fff5f5', 
+                color: '#c53030', 
+                padding: '10px', 
+                borderRadius: '5px', 
+                fontSize: '0.85rem', 
+                marginBottom: '15px',
+                border: '1px solid #feb2b2',
+                textAlign: 'center'
+              }}>
+                <AlertTriangle size={14} style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+                {authError}
+              </div>
+            )}
+            
+            <button type="submit" className="primary-button">Kirjaudu</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // --- PÄÄNÄKYMÄ (Sama kuin aiemmin) ---
+  return (
+    <div className="app-container">
+      {toast && <div className="toast">{toast}</div>}
+      
+      <header className="app-header">
+        <div className="header-left">
+          <Bus size={32} color="#007ac9" />
+          <h2 onClick={() => setView('main')} style={{ cursor: 'pointer' }}>Häiriövahti</h2>
+        </div>
+        <div className="header-right">
+          <button onClick={() => setView(view === 'main' ? 'docs' : 'main')} className="icon-button" title="Dokumentaatio">
+            {view === 'main' ? <FileText size={20} /> : <ChevronLeft size={20} />}
+          </button>
+          <button onClick={() => setDarkMode(!darkMode)} className="icon-button">
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          <button onClick={logout} className="icon-button logout"><LogOut size={20} /></button>
+        </div>
+      </header>
+
+      {view === 'docs' ? (
+        // DOKUMENTAATIOSIVU (sisältää testausraportin)
+        <div className="docs-content animate-in">
+          <h2 className="docs-title">Projektidokumentaatio & Testaus</h2>
+          
+          <section>
+            <h3>1. Projektin kuvaus</h3>
+            <p>Häiriövahti on React-pohjainen sovellus, joka auttaa käyttäjiä seuraamaan HSL-alueen julkisen liikenteen häiriöitä reaaliajassa.</p>
+          </section>
+
+          <section className="test-report-section">
+            <h3>2. TESTAUSRAPORTTI</h3>
+            <table className="test-table">
+              <thead>
+                <tr>
+                  <th>Testitapaus</th>
+                  <th>Odotettu tulos</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Kirjautumisvirheet</td>
+                  <td>Virheelliset tunnukset näyttävät selkeän virheilmoituksen.</td>
+                  <td className="status-ok">✅ HYVÄKSYTTY</td>
+                </tr>
+                <tr>
+                  <td>Suosikkien tallennus</td>
+                  <td>Suosikit tallentuvat Firestoreen per käyttäjä.</td>
+                  <td className="status-ok">✅ HYVÄKSYTTY</td>
+                </tr>
+                <tr>
+                  <td>Dark Mode</td>
+                  <td>Väriteema vaihtuu oikein kaikissa näkymissä.</td>
+                  <td className="status-ok">✅ HYVÄKSYTTY</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <button onClick={() => setView('main')} className="primary-button" style={{ marginTop: '20px' }}>Palaa sovellukseen</button>
+        </div>
+      ) : (
+        // SOVELLUKSEN PÄÄSIVU
+        <>
+          <div className="stats-bar">
+            <div><strong>{alerts.length}</strong> Häiriötä</div>
+            <div><strong>{favorites.length}</strong> Seurattua</div>
+            <div><strong>{favAlertsCount}</strong> Omaa häiriötä</div>
+          </div>
+
+          <div className="search-container">
+            <Search className="search-icon" size={20} />
+            <input 
+              type="text" 
+              placeholder="Etsi linjaa tai häiriötä..." 
+              className="search-input" 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+            />
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <button 
+              disabled={favorites.length === 0}
+              onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+              className="primary-button"
+              style={{ 
+                width: '100%', 
+                backgroundColor: favorites.length === 0 ? '#ccc' : (showOnlyFavorites ? '#ffc107' : '#007ac9'),
+                color: favorites.length === 0 ? '#666' : (showOnlyFavorites ? '#000' : '#fff'),
+                cursor: favorites.length === 0 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {showOnlyFavorites ? '★ Näytetään vain suosikit' : '☆ Suodata omat suosikit'}
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="center-loading"><Loader2 className="animate-spin" size={40} /></div>
+          ) : (
+            <main className="alert-list animate-in">
+              {filteredAlerts.map((alert, index) => (
+                <div key={index} className={`alert-card ${alert.alertSeverityLevel === 'SEVERE' ? 'severe' : 'info'}`}>
+                  <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <span className="badge">{alert.route?.shortName || 'INFO'}</span>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <Star 
+                        size={24} 
+                        onClick={() => handleFavoriteToggle(alert.route!.shortName)}
+                        style={{ 
+                          cursor: 'pointer', 
+                          fill: favorites.includes(alert.route?.shortName || '') ? '#ffc107' : 'none',
+                          color: favorites.includes(alert.route?.shortName || '') ? '#ffc107' : '#ccc' 
+                        }} 
+                      />
+                      {alert.alertSeverityLevel === 'SEVERE' ? <AlertTriangle color="#e53e3e" size={20} /> : <Info color="#007ac9" size={20} />}
+                    </div>
+                  </div>
+                  <h3>{alert.alertHeaderText}</h3>
+                  <p>{alert.alertDescriptionText}</p>
+                </div>
+              ))}
+            </main>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+export default App;
