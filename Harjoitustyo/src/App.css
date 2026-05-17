@@ -100,3 +100,36 @@ body {
   display: flex;
   justify-content: space-around;
 }
+.primary-button {
+  background-color: #007ac9; /* HSL Sininen */
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 12px; /* Pyöristetymmät kulmat tekevät siitä "nappimaisemman" */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease; /* Pehmeä animaatio */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Kevyt varjo tuo syvyyttä */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.primary-button:hover {
+  background-color: #005a96; /* Tummempi sininen päällä leijuessa */
+  transform: translateY(-2px); /* Nousee hieman ylöspäin */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Varjo vahvistuu */
+}
+
+.primary-button:active {
+  transform: translateY(0); /* Painuu alas klikatessa */
+}
+
+.primary-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
