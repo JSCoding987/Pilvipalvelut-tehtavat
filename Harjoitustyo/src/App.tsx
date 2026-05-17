@@ -141,7 +141,7 @@ function App() {
           <h2 style={{ color: 'var(--text-color)' }}>Häiriövahti</h2>
         </div>
         <div className="header-right">
-          <a href="raportti.html" className="icon-button" title="Projektidokumentaatio">
+          <a href="./raportti.html" className="icon-button" title="Projektidokumentaatio">
             <FileText size={20} />
           </a>
           <button onClick={() => setDarkMode(!darkMode)} className="icon-button" title="Vaihda teemaa">
