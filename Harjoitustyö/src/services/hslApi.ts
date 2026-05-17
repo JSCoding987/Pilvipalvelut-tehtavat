@@ -2,7 +2,7 @@
 const HSL_API_URL = 'https://api.digitransit.fi/routing/v2/hsl/gtfs/v1';
 
 // 2. Liitä kopioimasi koodi tähän heittomerkkien väliin
-const API_KEY = '72809238b50e4cf0a7bd0f6c7416fba8';
+const API_KEY = import.meta.env.VITE_HSL_API_KEY;
 
 export const fetchHslAlerts = async () => {
   const query = `

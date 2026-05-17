@@ -16,12 +16,12 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDoHxt0OkouwPdW3D2fr_9zvSYlbv6lFPU",
-  authDomain: "hsl-ilmoittaja.firebaseapp.com",
-  projectId: "hsl-ilmoittaja",
-  storageBucket: "hsl-ilmoittaja.firebasestorage.app",
-  messagingSenderId: "784470359267",
-  appId: "1:784470359267:web:83a40d1e479c49b08459d6"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Alustetaan Firebase

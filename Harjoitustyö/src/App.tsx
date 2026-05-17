@@ -79,36 +79,24 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // --- KIRJAUTUMISEN KÄSITTELY + VIRHEILMOITUKSET ---
+  // --- KIRJAUTUMISEN KÄSITTELY ---
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    setAuthError(''); // Tyhjennetään vanha virhe
+    setAuthError('');
     
     try {
       await loginEmail(email, password);
       showToast("Tervetuloa takaisin!");
     } catch (err: any) {
-      console.error("Login error code:", err.code);
-      
-      // Tarkennetut virheilmoitukset Firebasen koodeilla
       switch (err.code) {
         case 'auth/invalid-credential':
           setAuthError("Väärä sähköpostiosoite tai salasana.");
           break;
-        case 'auth/user-not-found':
-          setAuthError("Käyttäjätunnusta ei löytynyt.");
-          break;
-        case 'auth/wrong-password':
-          setAuthError("Väärä salasana.");
-          break;
-        case 'auth/invalid-email':
-          setAuthError("Virheellinen sähköpostiosoite.");
-          break;
         case 'auth/too-many-requests':
-          setAuthError("Liian monta epäonnistunutta yritystä. Yritä hetken kuluttua uudelleen.");
+          setAuthError("Liian monta yritystä. Yritä hetken kuluttua uudelleen.");
           break;
         default:
-          setAuthError("Kirjautuminen epäonnistui. Yritä uudelleen.");
+          setAuthError("Kirjautuminen epäonnistui.");
       }
     }
   };
@@ -117,7 +105,14 @@ function App() {
     if (!user) return;
     const isFav = favorites.includes(lineId);
     const newFavs = isFav ? favorites.filter(id => id !== lineId) : [...favorites, lineId];
+    
     setFavorites(newFavs);
+
+    // KORJAUS: Jos suosikit loppuvat, kytketään suodatus automaattisesti pois päältä
+    if (newFavs.length === 0) {
+      setShowOnlyFavorites(false);
+    }
+
     await toggleFavorite(user.uid, lineId, !isFav);
     showToast(isFav ? `Poistettu: ${lineId}` : `Lisätty: ${lineId}`);
   };
@@ -161,24 +156,12 @@ function App() {
               onChange={e => setPassword(e.target.value)} 
               required 
             />
-            
-            {/* VIRHEILMOITUS LAATIKKO */}
             {authError && (
-              <div style={{ 
-                backgroundColor: '#fff5f5', 
-                color: '#c53030', 
-                padding: '10px', 
-                borderRadius: '5px', 
-                fontSize: '0.85rem', 
-                marginBottom: '15px',
-                border: '1px solid #feb2b2',
-                textAlign: 'center'
-              }}>
-                <AlertTriangle size={14} style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+              <div className="auth-error-box">
+                <AlertTriangle size={14} style={{ marginRight: '5px' }} />
                 {authError}
               </div>
             )}
-            
             <button type="submit" className="primary-button">Kirjaudu</button>
           </form>
         </div>
@@ -186,7 +169,7 @@ function App() {
     );
   }
 
-  // --- PÄÄNÄKYMÄ (Sama kuin aiemmin) ---
+  // --- PÄÄNÄKYMÄ ---
   return (
     <div className="app-container">
       {toast && <div className="toast">{toast}</div>}
@@ -194,7 +177,12 @@ function App() {
       <header className="app-header">
         <div className="header-left">
           <Bus size={32} color="#007ac9" />
-          <h2 onClick={() => setView('main')} style={{ cursor: 'pointer' }}>Häiriövahti</h2>
+          <h2 
+            onClick={() => setView('main')} 
+            style={{ cursor: 'pointer', color: 'var(--text-color)' }}
+          >
+            Häiriövahti
+          </h2>
         </div>
         <div className="header-right">
           <button onClick={() => setView(view === 'main' ? 'docs' : 'main')} className="icon-button" title="Dokumentaatio">
@@ -208,49 +196,29 @@ function App() {
       </header>
 
       {view === 'docs' ? (
-        // DOKUMENTAATIOSIVU (sisältää testausraportin)
         <div className="docs-content animate-in">
           <h2 className="docs-title">Projektidokumentaatio & Testaus</h2>
-          
           <section>
             <h3>1. Projektin kuvaus</h3>
-            <p>Häiriövahti on React-pohjainen sovellus, joka auttaa käyttäjiä seuraamaan HSL-alueen julkisen liikenteen häiriöitä reaaliajassa.</p>
+            <p>React-pohjainen sovellus HSL-häiriöiden seurantaan reaaliajassa.</p>
           </section>
-
           <section className="test-report-section">
             <h3>2. TESTAUSRAPORTTI</h3>
             <table className="test-table">
               <thead>
-                <tr>
-                  <th>Testitapaus</th>
-                  <th>Odotettu tulos</th>
-                  <th>Status</th>
-                </tr>
+                <tr><th>Testitapaus</th><th>Status</th></tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Kirjautumisvirheet</td>
-                  <td>Virheelliset tunnukset näyttävät selkeän virheilmoituksen.</td>
-                  <td className="status-ok">✅ HYVÄKSYTTY</td>
-                </tr>
-                <tr>
-                  <td>Suosikkien tallennus</td>
-                  <td>Suosikit tallentuvat Firestoreen per käyttäjä.</td>
-                  <td className="status-ok">✅ HYVÄKSYTTY</td>
-                </tr>
-                <tr>
-                  <td>Dark Mode</td>
-                  <td>Väriteema vaihtuu oikein kaikissa näkymissä.</td>
-                  <td className="status-ok">✅ HYVÄKSYTTY</td>
-                </tr>
+                <tr><td>Kirjautumisvirheet</td><td className="status-ok">✅ HYVÄKSYTTY</td></tr>
+                <tr><td>Suosikkien tallennus</td><td className="status-ok">✅ HYVÄKSYTTY</td></tr>
+                <tr><td>Dark Mode</td><td className="status-ok">✅ HYVÄKSYTTY</td></tr>
+                <tr><td>Tyhjän suosikkilistan hallinta</td><td className="status-ok">✅ HYVÄKSYTTY</td></tr>
               </tbody>
             </table>
           </section>
-
           <button onClick={() => setView('main')} className="primary-button" style={{ marginTop: '20px' }}>Palaa sovellukseen</button>
         </div>
       ) : (
-        // SOVELLUKSEN PÄÄSIVU
         <>
           <div className="stats-bar">
             <div><strong>{alerts.length}</strong> Häiriötä</div>
@@ -294,16 +262,26 @@ function App() {
                   <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <span className="badge">{alert.route?.shortName || 'INFO'}</span>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <Star 
-                        size={24} 
-                        onClick={() => handleFavoriteToggle(alert.route!.shortName)}
-                        style={{ 
-                          cursor: 'pointer', 
-                          fill: favorites.includes(alert.route?.shortName || '') ? '#ffc107' : 'none',
-                          color: favorites.includes(alert.route?.shortName || '') ? '#ffc107' : '#ccc' 
-                        }} 
-                      />
-                      {alert.alertSeverityLevel === 'SEVERE' ? <AlertTriangle color="#e53e3e" size={20} /> : <Info color="#007ac9" size={20} />}
+                      
+                      {alert.route?.shortName ? (
+                        <Star 
+                          size={24} 
+                          onClick={() => handleFavoriteToggle(alert.route!.shortName)}
+                          style={{ 
+                            cursor: 'pointer', 
+                            fill: favorites.includes(alert.route.shortName) ? '#ffc107' : 'none',
+                            color: favorites.includes(alert.route.shortName) ? '#ffc107' : '#ccc' 
+                          }} 
+                        />
+                      ) : (
+                        <div style={{ width: '24px' }}></div>
+                      )}
+
+                      {alert.alertSeverityLevel === 'SEVERE' ? (
+                        <AlertTriangle color="#e53e3e" size={20} />
+                      ) : (
+                        <Info color="#007ac9" size={20} />
+                      )}
                     </div>
                   </div>
                   <h3>{alert.alertHeaderText}</h3>
