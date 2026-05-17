@@ -108,7 +108,7 @@ function App() {
     })
     .filter((a, i, self) => i === self.findIndex(t => t.alertDescriptionText === a.alertDescriptionText));
 
-  // Laskurit tilastoja varten
+  // Laskurit tilastoja varten (PALAUTETTU ALKUPERÄINEN LOGIIKKA)
   const totalAlertsCount = alerts.length;
   const favoritesInAlertsCount = alerts.filter(a => a.route?.shortName && favorites.includes(a.route.shortName)).length;
 
@@ -164,7 +164,6 @@ function App() {
         />
       </div>
 
-      {/* TILASTORIVI ENNEN NAPPIA */}
       <div className="stats-row" style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -196,10 +195,12 @@ function App() {
           {filteredAlerts.length > 0 ? (
             filteredAlerts.map((alert, index) => (
               <div key={index} className={`alert-card ${alert.alertSeverityLevel === 'SEVERE' ? 'severe' : 'info'}`}>
-                <div className="card-header">
+                <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span className="badge">{alert.route?.shortName || 'INFO'}</span>
+                  
+                  {/* Info ja Tähti rinnakkain oikealla reunalla */}
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    {alert.route?.shortName ? (
+                    {alert.route?.shortName && (
                       <Star 
                         size={22} 
                         onClick={() => handleFavoriteToggle(alert.route!.shortName)}
@@ -209,12 +210,12 @@ function App() {
                           color: favorites.includes(alert.route.shortName) ? '#ffc107' : '#ccc' 
                         }} 
                       />
-                    ) : <div style={{ width: '22px' }}></div>}
+                    )}
                     {alert.alertSeverityLevel === 'SEVERE' ? <AlertTriangle color="#e53e3e" size={20} /> : <Info color="#007ac9" size={20} />}
                   </div>
                 </div>
-                <h3>{alert.alertHeaderText}</h3>
-                <p>{alert.alertDescriptionText}</p>
+             <h3>{alert.alertHeaderText}</h3>
+            <p>{alert.alertDescriptionText}</p>
               </div>
             ))
           ) : (
