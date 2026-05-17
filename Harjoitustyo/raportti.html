@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Häiriövahti - Dokumentaatio</title>
+    <style>
+        :root {
+            --primary-color: #007ac9;
+            --text-color: #333;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --accent-green: #0cce6b;
+            --accent-orange: #ffa400;
+            --accent-red: #ff4e42;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        h1, h2, h3 { color: var(--primary-color); }
+        h4 { margin-bottom: 5px; color: #555; }
+
+        section {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        .report-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin: 10px 0 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .metric-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .metric-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+
+        .metric-value { font-weight: bold; }
+        .good { color: var(--accent-green); }
+        .moderate { color: var(--accent-orange); }
+        .poor { color: var(--accent-red); }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        .summary-box {
+            background: #eef7ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-link">← Takaisin sovellukseen</a>
+    
+    <header>
+        <h1>Projektidokumentaatio</h1>
+        <p>Häiriövahti - Tekninen suorituskyky ja saavutettavuus</p>
+    </header>
+    <section>
+    <h2>Mikä on Häiriövahti?</h2>
+    <p><strong>Häiriövahti </strong>on nykyaikainen, reaaliaikainen verkkosovellus,
+    joka on suunniteltu helpottamaan Helsingin seudun liikenteen (HSL) käyttäjien arkea. Sovelluksen avulla käyttäjät voivat seurata julkisen liikenteen häiriötiedotteita. </p>
+    </section>
+
+    <section>
+        <h2>Responsiivisuus</h2>
+        <p>Sivuston toimivuus on testattu kattavasti eri päätelaitteilla:</p>
+        
+        <div style="margin-top: 15px;">
+            <h4>Desktop</h4>
+            <p>Sivusto toimii moitteettomasti, kaikki elementit latautuvat ja asettuvat oikein. Käyttäjäkokemus on sujuva ja intuitiivinen.</p>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <h4>Tablet</h4>
+            <p>Layout mukautuu hyvin vaakasuunnassa, pystysuunnassa elementit asettuvat oikein. Käytettävyys on hyvä sekä vaakatasossa että pystysuunnassa.</p>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <h4>Mobiili</h4>
+            <p>Sivusto on täysin responsiivinen ja käytettävä. Elementit asettuvat hyvin näytön koosta riippumatta, ja navigointi on helppoa.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Toimivuus Uusimmilla Selaimilla</h2>
+        <p>Sivusto on testattu ja todettu toimivaksi seuraavilla selaimilla:</p>
+        <ul>
+            <li><strong>Google Chrome (v102):</strong> Ei havaittuja ongelmia, sivusto toimii sujuvasti.</li>
+            <li><strong>Mozilla Firefox (v100):</strong> Toiminnallisuus on kunnossa, kaikki elementit latautuvat oikein.</li>
+            <li><strong>Microsoft Edge (v102):</strong> Sivusto latautuu nopeasti ja ilman ongelmia.</li>
+            <li><strong>Safari (v15.4):</strong> Pieniä visuaalisia eroavaisuuksia, mutta toiminnallisuus on täysin kunnossa.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Sivujen Latautumisaika</h2>
+        <p>Sivuston latautumisajat on analysoitu Google PageSpeed Insights -työkalulla. Analyysi on suoritettu sovelluksen päänäkymälle, mikä antaa realistisen kuvan suorituskyvystä datan latautuessa.</p>
+        <p><a href="https://pagespeed.web.dev/" target="_blank" style="color: var(--primary-color);">Linkki raporttityökaluun</a></p>
+
+        <div class="stats-grid">
+            <div>
+                <h3>Mobiili (80/100)</h3>
+                <img src="mobiili.png" alt="Mobiili suorituskyky raportti" class="report-image">
+                <ul class="metric-list">
+                    <li><span>First Contentful Paint (FCP):</span> <span class="metric-value moderate">1.7 s</span></li>
+                    <li><span>Largest Contentful Paint (LCP):</span> <span class="metric-value poor">5.2 s</span></li>
+                    <li><span>Total Blocking Time (TBT):</span> <span class="metric-value good">40 ms</span></li>
+                    <li><span>Cumulative Layout Shift (CLS):</span> <span class="metric-value good">0.041</span></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3>Desktop (94/100)</h3>
+                <img src="desktop.png" alt="Desktop suorituskyky raportti" class="report-image">
+                <ul class="metric-list">
+                    <li><span>First Contentful Paint (FCP):</span> <span class="metric-value good">0.5 s</span></li>
+                    <li><span>Largest Contentful Paint (LCP):</span> <span class="metric-value good">0.8 s</span></li>
+                    <li><span>Total Blocking Time (TBT):</span> <span class="metric-value good">0 ms</span></li>
+                    <li><span>Cumulative Layout Shift (CLS):</span> <span class="metric-value moderate">0.149</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Yhteenveto</h2>
+        <div class="summary-box">
+            <p>Sivusto on teknisesti hyvin toteutettu ja responsiivinen kaikilla päätelaitteilla. Vaikka mobiilissa tulee vastaan raportissa pientä ongelmaa, latausajat ovat hyvät eikä aiheuta ongelmia käyttäjälle.</p>
+            <p>Nämä tulokset viittaavat siihen, että sivusto on suunniteltu huolellisesti ja teknisesti hyvin toteutettu. Sivuston responsiivisuus, nopea latautuminen ja yhteensopivuus uusimpien selaimien kanssa varmistavat sujuvan käyttökokemuksen kaikille käyttäjille.</p>
+        </div>
+    </section>
+
+    <div style="text-align: center; margin-top: 40px; opacity: 0.6; font-size: 0.85rem;">
+        &copy; 2024 Häiriövahti - Projektidokumentaatio
+    </div>
+</div>
+
+</body>
+</html>
