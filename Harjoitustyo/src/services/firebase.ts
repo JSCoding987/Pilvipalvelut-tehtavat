@@ -24,26 +24,19 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Alustetaan Firebase
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-/**
- * Kirjautumistoiminto
- */
+
 export const loginEmail = (email: string, pass: string) => 
   signInWithEmailAndPassword(auth, email, pass);
 
-/**
- * Uloskirjautuminen
- */
+
 export const logout = () => signOut(auth);
 
-/**
- * Suosikkien hallinta Firestoreen.
- * Lisää tai poistaa linjan nimen käyttäjän dokumentista.
- */
+
 export const toggleFavorite = async (userId: string, lineId: string, isAdding: boolean) => {
   const userRef = doc(db, "users", userId);
   
@@ -51,12 +44,12 @@ export const toggleFavorite = async (userId: string, lineId: string, isAdding: b
     const docSnap = await getDoc(userRef);
     
     if (docSnap.exists()) {
-      // Päivitetään olemassa olevaa listaa
+     
       await updateDoc(userRef, {
         favorites: isAdding ? arrayUnion(lineId) : arrayRemove(lineId)
       });
     } else {
-      // Luodaan uusi dokumentti, jos sitä ei vielä ole
+     
       await setDoc(userRef, {
         favorites: [lineId]
       });

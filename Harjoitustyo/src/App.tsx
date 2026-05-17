@@ -108,7 +108,6 @@ function App() {
     })
     .filter((a, i, self) => i === self.findIndex(t => t.alertDescriptionText === a.alertDescriptionText));
 
-  // Laskurit tilastoja varten (PALAUTETTU ALKUPERÄINEN LOGIIKKA)
   const totalAlertsCount = alerts.length;
   const favoritesInAlertsCount = alerts.filter(a => a.route?.shortName && favorites.includes(a.route.shortName)).length;
 

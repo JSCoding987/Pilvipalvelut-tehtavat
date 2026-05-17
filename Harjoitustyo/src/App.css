@@ -6,21 +6,21 @@
   --text-color: #333;
   --border-color: #ddd;
 }
-/* Tämä varmistaa, että Häiriövahti-teksti muuttuu valkoiseksi dark modessa */
+
 [data-theme='dark'] .header-left h2 {
     color: #f7fafc !important;
 }
 
-/* Jos haluat varmistaa, että se on musta light modessa */
+
 [data-theme='light'] .header-left h2 {
     color: #1a202c !important;
 }
 
-/* Lisätään myös pehmeä vaihtuminen, jotta se ei välkähdä */
+
 .header-left h2 {
     transition: color 0.3s ease;
 }
-/* Dark Mode -värit */
+
 [data-theme='dark'] {
   --bg-color: #1a202c;
   --card-bg: #2d3748;
@@ -101,16 +101,16 @@ body {
   justify-content: space-around;
 }
 .primary-button {
-  background-color: #007ac9; /* HSL Sininen */
+  background-color: #007ac9;
   color: white;
   border: none;
   padding: 14px 20px;
-  border-radius: 12px; /* Pyöristetymmät kulmat tekevät siitä "nappimaisemman" */
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease; /* Pehmeä animaatio */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Kevyt varjo tuo syvyyttä */
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,13 +118,13 @@ body {
 }
 
 .primary-button:hover {
-  background-color: #005a96; /* Tummempi sininen päällä leijuessa */
-  transform: translateY(-2px); /* Nousee hieman ylöspäin */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Varjo vahvistuu */
+  background-color: #005a96;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .primary-button:active {
-  transform: translateY(0); /* Painuu alas klikatessa */
+  transform: translateY(0);
 }
 
 .primary-button:disabled {
